@@ -39,14 +39,14 @@ public class RegistrationController {
       participantListDataProvider.refreshAll();
       return new ResponseEntity<>(connectedParticipant.toString(), HttpStatus.CREATED);
     } else {
-      connectedParticipant.setLastHttpResponse(HttpStatus.CONFLICT.value());
-      connectedParticipantsRepository.save(connectedParticipant);
+      foundParticipant.setLastHttpResponse(HttpStatus.CONFLICT.value());
+      connectedParticipantsRepository.save(foundParticipant);
       participantListDataProvider.refreshAll();
       return new ResponseEntity<>(
           "Participant "
-              + connectedParticipant.getName()
+              + foundParticipant.getName()
               + " ("
-              + connectedParticipant.getId()
+              + foundParticipant.getId()
               + ") is already registered.",
           HttpStatus.CONFLICT);
     }
