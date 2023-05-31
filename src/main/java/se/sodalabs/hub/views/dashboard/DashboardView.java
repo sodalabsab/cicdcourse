@@ -65,8 +65,9 @@ public class DashboardView extends Div implements AfterNavigationObserver {
     participantCard.setSpacing(false);
     participantCard.getThemeList().add("spacing-m");
 
+    String participantAvatarImg = participant.getAvatarImg();
     StreamResource moodImageResource =
-        new StreamResource("1.png", () -> getClass().getResourceAsStream("/img/avatars/1.png"));
+        new StreamResource(participantAvatarImg, () -> getClass().getResourceAsStream("/img/avatars/" + participantAvatarImg));
     Image moodImage = new Image(moodImageResource, participant.getCurrentMood());
     moodImage.setHeight("160px");
     moodImage.setWidth("160px");

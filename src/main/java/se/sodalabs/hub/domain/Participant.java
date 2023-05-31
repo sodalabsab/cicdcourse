@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 public class Participant {
@@ -13,11 +14,15 @@ public class Participant {
 
   private String currentMood;
 
+  private String avatarImg;
+
   private int lastHttpResponse;
 
   public Participant() {
     this.currentMood = Mood.getRandomMood();
     this.updateLastUpdatedAt();
+    int avatarImgIndex = ThreadLocalRandom.current().nextInt(1, 14); // generate a random avatar img
+    this.avatarImg = avatarImgIndex + ".png";
   }
 
   public Participant(String id, String name) {
@@ -72,6 +77,10 @@ public class Participant {
   public void setCurrentMood(String currentMood) {
     updateLastUpdatedAt();
     this.currentMood = currentMood;
+  }
+
+  public String getAvatarImg() {
+    return avatarImg;
   }
 
   @Override
