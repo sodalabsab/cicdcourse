@@ -1,19 +1,22 @@
 package se.sodalabs.hub.domain;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
-public class Mood {
-  private static final List<String> availableMoods =
-      Arrays.asList("sad", "confused", "sleepy", "happy", "cool", "angry", "disappointed", "dead");
+import java.util.Random;
 
-  public static String getRandomMood() {
-    Collections.shuffle(availableMoods);
-    return availableMoods.get(0);
-  }
+public enum Mood {
+  sad,
+  confused,
+  sleepy,
+  happy,
+  cool,
+  angry,
+  disappointed,
+  dead;
 
-  public static boolean isValidMood(String mood) {
-    return availableMoods.contains(mood);
+  private static final Random randomizer = new Random();
+
+  public static Mood randomMood() {
+    Mood[] moods = values();
+    return moods[randomizer.nextInt(moods.length)];
   }
 }

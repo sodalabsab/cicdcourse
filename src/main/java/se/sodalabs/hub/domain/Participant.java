@@ -12,14 +12,16 @@ public class Participant {
   private String name;
   private String lastUpdatedAt;
 
-  private String currentMood;
+  private Mood currentMood;
 
   private String avatarImg;
 
   private int lastHttpResponse;
 
   public Participant() {
-    this.currentMood = Mood.getRandomMood();
+    this.id = "sdf";
+    this.name = "sdfkljkl";
+    this.currentMood = Mood.randomMood();
     this.updateLastUpdatedAt();
     int avatarImgIndex = ThreadLocalRandom.current().nextInt(1, 14); // generate a random avatar img
     this.avatarImg = avatarImgIndex + ".png";
@@ -28,7 +30,7 @@ public class Participant {
   public Participant(String id, String name) {
     this.id = id;
     this.name = name;
-    this.currentMood = Mood.getRandomMood();
+    this.currentMood = Mood.randomMood();
     this.updateLastUpdatedAt();
   }
 
@@ -70,11 +72,11 @@ public class Participant {
     this.lastHttpResponse = lastHttpResponse;
   }
 
-  public String getCurrentMood() {
+  public Mood getCurrentMood() {
     return currentMood;
   }
 
-  public void setCurrentMood(String currentMood) {
+  public void setCurrentMood(Mood currentMood) {
     updateLastUpdatedAt();
     this.currentMood = currentMood;
   }
