@@ -31,7 +31,6 @@ import se.sodalabs.hub.domain.Participant;
 import se.sodalabs.hub.repository.ConnectedParticipantsRepository;
 import se.sodalabs.hub.views.dashboard.ParticipantListDataProvider;
 
-@CrossOrigin(origins = "http://localhost:9090")
 @Tag(
     name = "CI/CD Course Central Hub",
     description = "Resources to be used by participant services.")
