@@ -68,7 +68,7 @@ public class DashboardView extends Div implements AfterNavigationObserver {
     String participantAvatarImg = participant.getAvatarImg();
     StreamResource moodImageResource =
         new StreamResource(participantAvatarImg, () -> getClass().getResourceAsStream("/img/avatars/" + participantAvatarImg));
-    Image moodImage = new Image(moodImageResource, participant.getCurrentMood());
+    Image moodImage = new Image(moodImageResource, participant.getCurrentMood().toString());
     moodImage.setHeight("160px");
     moodImage.setWidth("160px");
     participantCard.add(moodImage);
