@@ -5,8 +5,11 @@ import com.vaadin.flow.component.UIDetachedException;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.DataProviderListener;
@@ -62,35 +65,63 @@ public class DashboardView extends Div implements AfterNavigationObserver {
   private HorizontalLayout createCard(Participant participant) {
     HorizontalLayout participantCard = new HorizontalLayout();
     participantCard.addClassName("card");
-    participantCard.setSpacing(false);
+    participantCard.setSpacing(true);
     participantCard.getThemeList().add("spacing-m");
 
-    String participantAvatarImg = participant.getAvatarImg();
-    StreamResource moodImageResource =
-        new StreamResource(participantAvatarImg, () -> getClass().getResourceAsStream("/img/avatars/" + participantAvatarImg));
-    Image moodImage = new Image(moodImageResource, participant.getCurrentMood().toString());
-    moodImage.setHeight("160px");
-    moodImage.setWidth("160px");
-    participantCard.add(moodImage);
+    // left column
+    VerticalLayout avatarColumn = new VerticalLayout();
+    avatarColumn.setAlignItems(Alignment.CENTER);
+    avatarColumn.setWidth("38%");
 
-    VerticalLayout infoPanel = new VerticalLayout();
     Span name = new Span(participant.getName());
     name.addClassName("name");
-    Span mood = new Span("is feeling " + participant.getCurrentMood());
-    mood.addClassName("mood");
+
+    String participantAvatarImg = participant.getAvatarImg();
+    StreamResource avatarImageResource =
+        new StreamResource(
+            participantAvatarImg,
+            () -> getClass().getResourceAsStream("/img/avatars/" + participantAvatarImg));
+    Image avatarImage = new Image(avatarImageResource, participant.getAvailability().toString());
+    avatarImage.setHeight("160px");
+    avatarImage.setWidth("160px");
+
     Span id = new Span(participant.getId());
     id.addClassName("id");
-    infoPanel.add(name, id, mood);
-    participantCard.add(infoPanel);
 
-    VerticalLayout statusPanel = new VerticalLayout();
-    Span lastResponse = new Span(String.valueOf(participant.getLastHttpResponse()));
-    lastResponse.addClassName("lastResponse");
-    Span lastUpdatedAt = new Span(participant.getLastUpdatedAt());
-    lastUpdatedAt.addClassName("lastUpdatedAt");
-    statusPanel.add(lastResponse);
-    statusPanel.add(lastResponse, lastUpdatedAt);
-    participantCard.add(statusPanel);
+    avatarColumn.add(name, avatarImage, id);
+    // end of left column
+
+    // right column
+    VerticalLayout participantInfoPanel = new VerticalLayout();
+    participantInfoPanel.setJustifyContentMode(JustifyContentMode.BETWEEN);
+    participantInfoPanel.setSpacing(false);
+    participantInfoPanel.setPadding(false);
+
+    VerticalLayout availabilityPanel = new VerticalLayout();
+    Span availabilityHeading = new Span("Availability");
+    availabilityHeading.addClassName("heading");
+    Span availability = new Span("Today: " + participant.getAvailability() + "!");
+    availability.addClassName("availability");
+    availabilityPanel.add(availabilityHeading, new Hr(), availability);
+
+    VerticalLayout lastUpdatePanel = new VerticalLayout();
+
+    String okOrNok = participant.getLastHttpResponse() > 299 ? "NOT OK" : "ok";
+    Span lastResponseInformation =
+        new Span(
+            "Last message received "
+                + okOrNok
+                + " ("
+                + participant.getLastHttpResponse()
+                + ") at "
+                + participant.getLastUpdatedAt());
+    lastResponseInformation.addClassName("lastResponse");
+    lastUpdatePanel.add(lastResponseInformation);
+
+    participantInfoPanel.add(availabilityPanel, lastUpdatePanel);
+    // end of right column
+
+    participantCard.add(avatarColumn, participantInfoPanel);
 
     if (participant.getLastHttpResponse() > 299) {
       participantCard.addClassName("failure");

@@ -49,35 +49,30 @@
 }
 
 .dashboard-view .name {
-  font-size: var(--lumo-font-size-l);
+  font-size: var(--lumo-font-size-xl);
   font-weight: normal;
   margin-left: var(--lumo-space-m);
   margin-right: var(--lumo-space-m);
 }
 
-.dashboard-view .mood {
-  font-size: var(--lumo-font-size-m);
+.dashboard-view .heading {
+  font-size: var(--lumo-font-size-xl);
+  font-weight: normal;
+  margin-left: var(--lumo-space-m);
+  margin-right: var(--lumo-space-m);
+}
+
+.dashboard-view .availability {
+  font-size: var(--lumo-font-size-l);
   font-weight: normal;
   margin-left: var(--lumo-space-m);
   margin-right: var(--lumo-space-m);
 }
 
 .dashboard-view .lastResponse {
-  font-size: var(--lumo-font-size-l);
-  font-weight: normal;
-  margin-left: var(--lumo-space-m);
-  margin-right: var(--lumo-space-m);
-}
-
-.dashboard-view .lastUpdatedAt {
   color: var(--lumo-tertiary-text-color);
-  font-size: var(--lumo-font-size-s);
-  margin-left: var(--lumo-space-m);
-  margin-right: var(--lumo-space-m);
-}
-
-.dashboard-view .heartbeatStatus {
-  font-size: var(--lumo-font-size-l);
+  font-size: var(--lumo-font-size-m);
+  font-weight: normal;
   margin-left: var(--lumo-space-m);
   margin-right: var(--lumo-space-m);
 }
