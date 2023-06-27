@@ -12,7 +12,7 @@ public class Participant {
   private String name;
   private String lastUpdatedAt;
 
-  private Mood currentMood;
+  private Availability currentAvailability;
 
   private String avatarImg;
 
@@ -21,7 +21,7 @@ public class Participant {
   public Participant() {
     this.id = "sdf";
     this.name = "sdfkljkl";
-    this.currentMood = Mood.randomMood();
+    this.currentAvailability = Availability.randomAvailability();
     this.updateLastUpdatedAt();
     int avatarImgIndex = ThreadLocalRandom.current().nextInt(1, 14); // generate a random avatar img
     this.avatarImg = avatarImgIndex + ".png";
@@ -30,7 +30,7 @@ public class Participant {
   public Participant(String id, String name) {
     this.id = id;
     this.name = name;
-    this.currentMood = Mood.randomMood();
+    this.currentAvailability = Availability.randomAvailability();
     this.updateLastUpdatedAt();
   }
 
@@ -72,13 +72,13 @@ public class Participant {
     this.lastHttpResponse = lastHttpResponse;
   }
 
-  public Mood getCurrentMood() {
-    return currentMood;
+  public Availability getAvailability() {
+    return currentAvailability;
   }
 
-  public void setCurrentMood(Mood currentMood) {
+  public void setCurrentAvailability(Availability currentAvailability) {
     updateLastUpdatedAt();
-    this.currentMood = currentMood;
+    this.currentAvailability = currentAvailability;
   }
 
   public String getAvatarImg() {
@@ -108,8 +108,8 @@ public class Participant {
         + ", 'lastUpdatedAt': '"
         + this.lastUpdatedAt
         + '\''
-        + ", 'currentMood': '"
-        + this.currentMood
+        + ", 'currentAvailability': '"
+        + this.currentAvailability
         + '\''
         + ", 'lastHttpResponse': '"
         + this.lastHttpResponse

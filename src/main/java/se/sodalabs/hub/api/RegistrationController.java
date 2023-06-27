@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.sodalabs.hub.domain.Mood;
+import se.sodalabs.hub.domain.Availability;
 import se.sodalabs.hub.domain.Participant;
 import se.sodalabs.hub.repository.ConnectedParticipantsRepository;
 import se.sodalabs.hub.views.dashboard.ParticipantListDataProvider;
@@ -88,7 +87,7 @@ public class RegistrationController {
                                   "id": "demo-sodalabs:sha-1",
                                   "name": "sodalabs",
                                   "lastUpdatedAt": "Thu Jun 08 22:54:41 CEST 2023",
-                                  "currentMood": "happy",
+                                  "currentAvailability": "happy",
                                   "avatarImg": "9.png",
                                   "lastHttpResponse": "201"
                                 }
@@ -208,7 +207,7 @@ public class RegistrationController {
 
   @PutMapping("/")
   @Operation(
-      summary = "Change the mood of a registered participant.",
+      summary = "Set the availability of a registered participant.",
       parameters = {
         @Parameter(in = ParameterIn.HEADER, name = "participantId", example = "demo-sodalabs:sha-1")
       },
@@ -217,15 +216,15 @@ public class RegistrationController {
               content = {
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Mood.class),
+                    schema = @Schema(implementation = Availability.class),
                     examples = {
-                      @ExampleObject(name = "New mood to set for participant", value = "sad")
+                      @ExampleObject(name = "Participant's availability today", value = "busy")
                     })
               }),
       responses = {
         @ApiResponse(
             responseCode = "200",
-            description = "Mood has been updated. New participant object returned.",
+            description = "Availability has been updated. New participant object returned.",
             content =
                 @Content(
                     schema = @Schema(implementation = Participant.class),
@@ -238,7 +237,7 @@ public class RegistrationController {
                               "id": "demo-sodalabs:sha-1",
                               "name": "sodalabs",
                               "lastUpdatedAt": "Thu Jun 08 22:54:41 CEST 2023",
-                              "currentMood": "sad",
+                              "currentAvailability": "busy",
                               "avatarImg": "9.png",
                               "lastHttpResponse": "201"
                             }
@@ -247,19 +246,19 @@ public class RegistrationController {
           @ApiResponse(
               responseCode = "400",
               description =
-                  "Bad Request. Make sure that the provided mood is valid."),
+                  "Bad Request. Make sure that the provided availability is valid."),
         @ApiResponse(
             responseCode = "404",
             description =
                 "Could not find a registered participant with the provided participantId.")
       })
-  ResponseEntity<String> setMood(
-      @RequestHeader("participantId") String participantId, @RequestBody Mood mood) {
+  ResponseEntity<String> setAvailability(
+      @RequestHeader("participantId") String participantId, @RequestBody Availability availability) {
     Participant foundParticipant =
         connectedParticipantsRepository.findById(participantId).orElse(null);
     if (foundParticipant != null) {
-      if (Arrays.asList(Mood.values()).contains(mood)) {
-        foundParticipant.setCurrentMood(mood);
+      if (Arrays.asList(Availability.values()).contains(availability)) {
+        foundParticipant.setCurrentAvailability(availability);
         foundParticipant.setLastHttpResponse(HttpStatus.OK.value());
         connectedParticipantsRepository.save(foundParticipant);
         participantListDataProvider.refreshAll();
@@ -268,11 +267,11 @@ public class RegistrationController {
         foundParticipant.setLastHttpResponse(HttpStatus.BAD_REQUEST.value());
         connectedParticipantsRepository.save(foundParticipant);
         participantListDataProvider.refreshAll();
-        return new ResponseEntity<>("Invalid mood: " + mood, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Invalid availability: " + availability, HttpStatus.BAD_REQUEST);
       }
     } else {
       return new ResponseEntity<>(
-          "Participant with id " + participantId + " was not found, can not set new mood.",
+          "Participant with id " + participantId + " was not found, can not set availability.",
           HttpStatus.NOT_FOUND);
     }
   }
