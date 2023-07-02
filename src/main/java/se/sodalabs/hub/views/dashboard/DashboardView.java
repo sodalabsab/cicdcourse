@@ -19,6 +19,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
+import java.util.Map.Entry;
 import se.sodalabs.hub.domain.Participant;
 import se.sodalabs.hub.repository.ConnectedParticipantsRepository;
 
@@ -100,9 +101,15 @@ public class DashboardView extends Div implements AfterNavigationObserver {
     VerticalLayout availabilityPanel = new VerticalLayout();
     Span availabilityHeading = new Span("Availability");
     availabilityHeading.addClassName("heading");
-    Span availability = new Span("Today: " + participant.getAvailability() + "!");
-    availability.addClassName("availability");
-    availabilityPanel.add(availabilityHeading, new Hr(), availability);
+    availabilityPanel.add(availabilityHeading, new Hr());
+
+    Span availabilityLine;
+    for (Entry<String, String> availabilityEntry : participant.getAvailability().entrySet()) {
+      availabilityLine =
+          new Span(availabilityEntry.getKey() + ": " + availabilityEntry.getValue() + "!");
+      availabilityLine.addClassName("availability");
+      availabilityPanel.add(availabilityLine);
+    }
 
     VerticalLayout lastUpdatePanel = new VerticalLayout();
 

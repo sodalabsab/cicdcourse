@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.Arrays;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -183,11 +183,11 @@ public class RegistrationController {
   @Operation(
       summary = "Delete (unregister) a registered participant.",
       parameters = {
-          @Parameter(
-              name = "participantId",
-              description =
-                  "The ID of the participant to delete. This was returned when registering the participant.",
-              example = "demo-sodalabs:sha-1")
+        @Parameter(
+            name = "participantId",
+            description =
+                "The ID of the participant to delete. This was returned when registering the participant.",
+            example = "demo-sodalabs:sha-1")
       })
   ResponseEntity<String> deleteonnectedParticipant(@PathVariable String participantId) {
     Participant foundParticipant =
@@ -243,31 +243,32 @@ public class RegistrationController {
                             }
                         """)
                     })),
-          @ApiResponse(
-              responseCode = "400",
-              description =
-                  "Bad Request. Make sure that the provided availability is valid."),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad Request. Make sure that the provided availability is valid."),
         @ApiResponse(
             responseCode = "404",
             description =
                 "Could not find a registered participant with the provided participantId.")
       })
   ResponseEntity<String> setAvailability(
-      @RequestHeader("participantId") String participantId, @RequestBody Availability availability) {
+      @RequestHeader("participantId") String participantId,
+      @RequestBody Map<String, String> availability) {
     Participant foundParticipant =
         connectedParticipantsRepository.findById(participantId).orElse(null);
     if (foundParticipant != null) {
-      if (Arrays.asList(Availability.values()).contains(availability)) {
-        foundParticipant.setCurrentAvailability(availability);
+      try {
+        foundParticipant.setAvailability(availability);
         foundParticipant.setLastHttpResponse(HttpStatus.OK.value());
         connectedParticipantsRepository.save(foundParticipant);
         participantListDataProvider.refreshAll();
         return new ResponseEntity<>(foundParticipant.toString(), HttpStatus.OK);
-      } else {
+      } catch (Exception e) {
         foundParticipant.setLastHttpResponse(HttpStatus.BAD_REQUEST.value());
         connectedParticipantsRepository.save(foundParticipant);
         participantListDataProvider.refreshAll();
-        return new ResponseEntity<>("Invalid availability: " + availability, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+            "Invalid availability: " + availability, HttpStatus.BAD_REQUEST);
       }
     } else {
       return new ResponseEntity<>(
