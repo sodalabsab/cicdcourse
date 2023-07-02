@@ -34,8 +34,8 @@ import se.sodalabs.hub.views.dashboard.ParticipantListDataProvider;
     name = "CI/CD Course Central Hub",
     description = "Resources to be used by participant services.")
 @RestController
-@RequestMapping("/api/participant")
-public class RegistrationController {
+@RequestMapping("/api/v1/participant")
+public class ParticipantController {
 
   private static final Gson gson = new Gson();
 
@@ -43,7 +43,7 @@ public class RegistrationController {
 
   @Autowired ConnectedParticipantsRepository connectedParticipantsRepository;
 
-  public RegistrationController() {}
+  public ParticipantController() {}
 
   @PostMapping(
       path = "/",
