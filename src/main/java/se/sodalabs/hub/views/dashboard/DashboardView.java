@@ -81,7 +81,7 @@ public class DashboardView extends Div implements AfterNavigationObserver {
         new StreamResource(
             participantAvatarImg,
             () -> getClass().getResourceAsStream("/img/avatars/" + participantAvatarImg));
-    Image avatarImage = new Image(avatarImageResource, participant.getAvailability().toString());
+    Image avatarImage = new Image(avatarImageResource, participant.getName());
     avatarImage.setHeight("160px");
     avatarImage.setWidth("160px");
 
