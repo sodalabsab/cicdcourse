@@ -128,7 +128,14 @@ public class ParticipantController {
       summary =
           "Send a heartbeat as a registered participant, letting the hub know you're still alive.",
       parameters = {
-        @Parameter(in = ParameterIn.HEADER, name = "participantId", example = "demo-sodalabs:sha-1")
+        @Parameter(
+            in = ParameterIn.HEADER,
+            name = "participantId",
+            example = "demo-sodalabs:sha-1"),
+        @Parameter(
+            in = ParameterIn.HEADER,
+            name = "timestamp",
+            description = "Recorded timestamp of heartbeat")
       },
       responses = {
         @ApiResponse(
@@ -137,10 +144,20 @@ public class ParticipantController {
             content = @Content(schema = @Schema())),
         @ApiResponse(responseCode = "404")
       })
-  ResponseEntity<String> heartbeat(@RequestHeader("participantId") String participantId) {
+  ResponseEntity<String> heartbeat(
+      @RequestHeader("participantId") String participantId,
+      @RequestHeader("heartbeat") String timestamp) {
     Participant foundParticipant =
         connectedParticipantsRepository.findById(participantId).orElse(null);
     if (foundParticipant != null) {
+      try {
+        Long.parseLong(timestamp);
+      } catch (NumberFormatException e) {
+        foundParticipant.setLastHttpResponse(HttpStatus.BAD_REQUEST.value());
+        connectedParticipantsRepository.save(foundParticipant);
+        participantListDataProvider.refreshAll();
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      }
       foundParticipant.setLastHttpResponse(HttpStatus.NO_CONTENT.value());
       connectedParticipantsRepository.save(foundParticipant);
       participantListDataProvider.refreshAll();
