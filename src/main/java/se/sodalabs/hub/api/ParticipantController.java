@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.sodalabs.hub.domain.Availability;
+import se.sodalabs.hub.domain.Availability.availableTimeslots;
 import se.sodalabs.hub.domain.Participant;
 import se.sodalabs.hub.repository.ConnectedParticipantsRepository;
 import se.sodalabs.hub.views.dashboard.ParticipantListDataProvider;
@@ -87,7 +89,7 @@ public class ParticipantController {
                                   "id": "demo-sodalabs:sha-1",
                                   "name": "sodalabs",
                                   "lastUpdatedAt": "Thu Jun 08 22:54:41 CEST 2023",
-                                  "currentAvailability": "happy",
+                                  "availability": { "Today": "busy" },
                                   "avatarImg": "9.png",
                                   "lastHttpResponse": "201"
                                 }
@@ -216,7 +218,7 @@ public class ParticipantController {
               content = {
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Availability.class),
+                    schema = @Schema(implementation = String.class),
                     examples = {
                       @ExampleObject(name = "Participant's availability today", value = "busy")
                     })
@@ -237,7 +239,7 @@ public class ParticipantController {
                               "id": "demo-sodalabs:sha-1",
                               "name": "sodalabs",
                               "lastUpdatedAt": "Thu Jun 08 22:54:41 CEST 2023",
-                              "currentAvailability": "busy",
+                              "availability": "{ \"Today\": \"busy\" }",
                               "avatarImg": "9.png",
                               "lastHttpResponse": "201"
                             }
@@ -253,12 +255,14 @@ public class ParticipantController {
       })
   ResponseEntity<String> setAvailability(
       @RequestHeader("participantId") String participantId,
-      @RequestBody Map<String, String> availability) {
+      @RequestBody String availability) {
     Participant foundParticipant =
         connectedParticipantsRepository.findById(participantId).orElse(null);
     if (foundParticipant != null) {
       try {
-        foundParticipant.setAvailability(availability);
+        HashMap<String, String> newAvailability = new HashMap<>();
+        newAvailability.put(availableTimeslots.Today.name(), availability.replace("\"", ""));
+        foundParticipant.setAvailability(newAvailability);
         foundParticipant.setLastHttpResponse(HttpStatus.OK.value());
         connectedParticipantsRepository.save(foundParticipant);
         participantListDataProvider.refreshAll();

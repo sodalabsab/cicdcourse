@@ -96,9 +96,10 @@ public class Participant {
     int maxEntries = availableTimeslots.values().length;
 
     for (String key : newAvailabilityEntry.keySet()) {
-      if (!Arrays.asList(Availability.availableTimeslots.values()).contains(key)
+      if (!Arrays.asList(Availability.availableTimeslots.values())
+              .contains(Availability.availableTimeslots.valueOf(key))
           || !Arrays.asList(Availability.availableValues.values())
-              .contains(newAvailabilityEntry.get(key))) {
+              .contains(Availability.availableValues.valueOf(newAvailabilityEntry.get(key)))) {
 
         throw new RuntimeException(
             "Could not map key "
@@ -155,7 +156,7 @@ public class Participant {
         + ", 'lastUpdatedAt': '"
         + this.lastUpdatedAt
         + '\''
-        + ", 'currentAvailability': '"
+        + ", 'availability': '"
         + this.availability
         + '\''
         + ", 'lastHttpResponse': '"
