@@ -10,7 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.sodalabs.hub.domain.Availability;
+import se.sodalabs.hub.domain.Availability.availableTimeslots;
 import se.sodalabs.hub.domain.Participant;
 import se.sodalabs.hub.repository.ConnectedParticipantsRepository;
 import se.sodalabs.hub.views.dashboard.ParticipantListDataProvider;
@@ -34,8 +36,8 @@ import se.sodalabs.hub.views.dashboard.ParticipantListDataProvider;
     name = "CI/CD Course Central Hub",
     description = "Resources to be used by participant services.")
 @RestController
-@RequestMapping("/api/participant")
-public class RegistrationController {
+@RequestMapping("/api/v1/participant")
+public class ParticipantController {
 
   private static final Gson gson = new Gson();
 
@@ -43,7 +45,7 @@ public class RegistrationController {
 
   @Autowired ConnectedParticipantsRepository connectedParticipantsRepository;
 
-  public RegistrationController() {}
+  public ParticipantController() {}
 
   @PostMapping(
       path = "/",
@@ -87,7 +89,7 @@ public class RegistrationController {
                                   "id": "demo-sodalabs:sha-1",
                                   "name": "sodalabs",
                                   "lastUpdatedAt": "Thu Jun 08 22:54:41 CEST 2023",
-                                  "currentAvailability": "happy",
+                                  "availability": { "Today": "busy" },
                                   "avatarImg": "9.png",
                                   "lastHttpResponse": "201"
                                 }
@@ -183,11 +185,11 @@ public class RegistrationController {
   @Operation(
       summary = "Delete (unregister) a registered participant.",
       parameters = {
-          @Parameter(
-              name = "participantId",
-              description =
-                  "The ID of the participant to delete. This was returned when registering the participant.",
-              example = "demo-sodalabs:sha-1")
+        @Parameter(
+            name = "participantId",
+            description =
+                "The ID of the participant to delete. This was returned when registering the participant.",
+            example = "demo-sodalabs:sha-1")
       })
   ResponseEntity<String> deleteonnectedParticipant(@PathVariable String participantId) {
     Participant foundParticipant =
@@ -216,7 +218,7 @@ public class RegistrationController {
               content = {
                 @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Availability.class),
+                    schema = @Schema(implementation = String.class),
                     examples = {
                       @ExampleObject(name = "Participant's availability today", value = "busy")
                     })
@@ -237,37 +239,40 @@ public class RegistrationController {
                               "id": "demo-sodalabs:sha-1",
                               "name": "sodalabs",
                               "lastUpdatedAt": "Thu Jun 08 22:54:41 CEST 2023",
-                              "currentAvailability": "busy",
+                              "availability": "{ \"Today\": \"busy\" }",
                               "avatarImg": "9.png",
                               "lastHttpResponse": "201"
                             }
                         """)
                     })),
-          @ApiResponse(
-              responseCode = "400",
-              description =
-                  "Bad Request. Make sure that the provided availability is valid."),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad Request. Make sure that the provided availability is valid."),
         @ApiResponse(
             responseCode = "404",
             description =
                 "Could not find a registered participant with the provided participantId.")
       })
   ResponseEntity<String> setAvailability(
-      @RequestHeader("participantId") String participantId, @RequestBody Availability availability) {
+      @RequestHeader("participantId") String participantId,
+      @RequestBody String availability) {
     Participant foundParticipant =
         connectedParticipantsRepository.findById(participantId).orElse(null);
     if (foundParticipant != null) {
-      if (Arrays.asList(Availability.values()).contains(availability)) {
-        foundParticipant.setCurrentAvailability(availability);
+      try {
+        HashMap<String, String> newAvailability = new HashMap<>();
+        newAvailability.put(availableTimeslots.Today.name(), availability.replace("\"", ""));
+        foundParticipant.setAvailability(newAvailability);
         foundParticipant.setLastHttpResponse(HttpStatus.OK.value());
         connectedParticipantsRepository.save(foundParticipant);
         participantListDataProvider.refreshAll();
         return new ResponseEntity<>(foundParticipant.toString(), HttpStatus.OK);
-      } else {
+      } catch (Exception e) {
         foundParticipant.setLastHttpResponse(HttpStatus.BAD_REQUEST.value());
         connectedParticipantsRepository.save(foundParticipant);
         participantListDataProvider.refreshAll();
-        return new ResponseEntity<>("Invalid availability: " + availability, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+            "Invalid availability: " + availability, HttpStatus.BAD_REQUEST);
       }
     } else {
       return new ResponseEntity<>(
