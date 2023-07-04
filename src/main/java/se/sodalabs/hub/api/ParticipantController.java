@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.sodalabs.hub.domain.Availability;
 import se.sodalabs.hub.domain.Availability.availableTimeslots;
 import se.sodalabs.hub.domain.Participant;
 import se.sodalabs.hub.repository.ConnectedParticipantsRepository;
@@ -271,8 +269,7 @@ public class ParticipantController {
                 "Could not find a registered participant with the provided participantId.")
       })
   ResponseEntity<String> setAvailability(
-      @RequestHeader("participantId") String participantId,
-      @RequestBody String availability) {
+      @RequestHeader("participantId") String participantId, @RequestBody String availability) {
     Participant foundParticipant =
         connectedParticipantsRepository.findById(participantId).orElse(null);
     if (foundParticipant != null) {
