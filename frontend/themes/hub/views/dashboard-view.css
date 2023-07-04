@@ -56,14 +56,14 @@
 }
 
 .dashboard-view .heading {
-  font-size: var(--lumo-font-size-xl);
+  font-size: var(--lumo-font-size-l);
   font-weight: normal;
   margin-left: var(--lumo-space-m);
   margin-right: var(--lumo-space-m);
 }
 
 .dashboard-view .availability {
-  font-size: var(--lumo-font-size-l);
+  font-size: var(--lumo-font-size-xl);
   font-weight: normal;
   margin-left: var(--lumo-space-m);
   margin-right: var(--lumo-space-m);
