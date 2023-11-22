@@ -1,153 +1,96 @@
 package se.sodalabs.hub.views.dashboard;
 
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.UIDetachedException;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.FlexLayout.ContentAlignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.provider.DataProviderListener;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.PreserveOnRefresh;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
-import java.util.Map.Entry;
-import se.sodalabs.hub.domain.Participant;
-import se.sodalabs.hub.repository.ConnectedParticipantsRepository;
+import jakarta.annotation.PostConstruct;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import se.sodalabs.hub.repository.RegisteredParticipant;
+import se.sodalabs.hub.repository.service.ParticipantService;
 
 @PageTitle("dashboard")
 @Route(value = "/")
 @PreserveOnRefresh
-public class DashboardView extends Div implements AfterNavigationObserver {
+public class DashboardView extends ParticipantsContainer implements AfterNavigationObserver {
 
-  ConnectedParticipantsRepository connectedParticipantsRepository;
-  ParticipantListDataProvider participantListDataProvider;
-  final Grid<Participant> grid = new Grid<>();
+  @Autowired ParticipantService participantService;
+  private final FlexLayout flexLayout = new FlexLayout();
+  private final VerticalLayout verticalLayout = new VerticalLayout();
+  private final HorizontalLayout attribution = createAttribution();
+  private final int NUMBER_OF_COLUMNS = 2;
 
-  public DashboardView(
-      ConnectedParticipantsRepository connectedParticipantsRepository,
-      ParticipantListDataProvider participantListDataProvider) {
-    this.connectedParticipantsRepository = connectedParticipantsRepository;
-    this.participantListDataProvider = participantListDataProvider;
-
+  public DashboardView() {
     addClassName("dashboard-view");
     setSizeFull();
-    grid.setHeight("100%");
-    grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-    grid.addComponentColumn(this::createCard);
-
-    grid.setDataProvider(participantListDataProvider);
-    participantListDataProvider.addDataProviderListener(
-        (DataProviderListener)
-            event -> {
-              UI ui;
-              if (grid.getUI().isPresent()) {
-                ui = grid.getUI().get();
-                ui.access(
-                    () -> {
-                      grid.setItems(connectedParticipantsRepository.findAll());
-                    });
-              } else {
-                throw new UIDetachedException("No UI found for DashboardView Component");
-              }
-            });
-
-    add(grid);
   }
 
-  private HorizontalLayout createCard(Participant participant) {
-    HorizontalLayout participantCard = new HorizontalLayout();
-    participantCard.addClassName("card");
-    participantCard.setSpacing(true);
-    participantCard.getThemeList().add("spacing-m");
+  @PostConstruct
+  private void init() {
+    verticalLayout.setHeightFull();
+    verticalLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
+    add(verticalLayout);
+    participantService.addParticipantChangeListener(this::refreshDashboardView);
+  }
 
-    // left column
-    VerticalLayout avatarColumn = new VerticalLayout();
-    avatarColumn.setAlignItems(Alignment.CENTER);
-    avatarColumn.setWidth("38%");
+  private void refreshDashboardView() {
+    getUI()
+        .ifPresent(
+            ui ->
+                ui.access(
+                    () -> {
+                      removeAll();
+                      verticalLayout.removeAll();
+                      flexLayout.removeAll();
+                      flexLayout.setFlexWrap(FlexLayout.FlexWrap.WRAP);
+                      flexLayout.setWidthFull();
+                      flexLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+                      flexLayout.setHeight("95%");
+                      flexLayout.setAlignContent(ContentAlignment.START);
 
-    Span name = new Span(participant.getName());
-    name.addClassName("name");
+                      List<RegisteredParticipant> participants =
+                          participantService.getAllParticipants();
 
-    String participantAvatarImg = participant.getAvatarImg();
-    StreamResource avatarImageResource =
-        new StreamResource(
-            participantAvatarImg,
-            () -> getClass().getResourceAsStream("/img/avatars/" + participantAvatarImg));
-    Image avatarImage = new Image(avatarImageResource, participant.getName());
-    avatarImage.setHeight("160px");
-    avatarImage.setWidth("160px");
+                      for (RegisteredParticipant participant : participants) {
+                        VerticalLayout card = new ParticipantCard(participant);
+                        card.setMinWidth("calc(80% / " + NUMBER_OF_COLUMNS + ")");
+                        card.setMaxWidth("calc(80% / " + NUMBER_OF_COLUMNS + ")");
+                        card.setWidth("calc(80% / " + NUMBER_OF_COLUMNS + ")");
+                        flexLayout.add(card);
+                      }
 
-    Span id = new Span(participant.getId());
-    id.addClassName("id");
-
-    avatarColumn.add(name, avatarImage, id);
-    // end of left column
-
-    // right column
-    VerticalLayout participantInfoPanel = new VerticalLayout();
-    participantInfoPanel.setJustifyContentMode(JustifyContentMode.BETWEEN);
-    participantInfoPanel.setSpacing(false);
-    participantInfoPanel.setPadding(false);
-
-    VerticalLayout availabilityPanel = new VerticalLayout();
-    Span availabilityHeading = new Span("Availability");
-    availabilityHeading.addClassName("heading");
-    availabilityPanel.add(availabilityHeading, new Hr());
-
-    Span availabilityLine;
-    for (Entry<String, String> availabilityEntry : participant.getAvailability().entrySet()) {
-      availabilityLine =
-          new Span(availabilityEntry.getKey() + ": " + availabilityEntry.getValue() + "!");
-      availabilityLine.addClassName("availability");
-      availabilityPanel.add(availabilityLine);
-    }
-
-    VerticalLayout lastUpdatePanel = new VerticalLayout();
-
-    String okOrNok = participant.getLastHttpResponse() > 299 ? "NOT OK" : "ok";
-    Span lastResponseInformation =
-        new Span(
-            "Last message received "
-                + okOrNok
-                + " ("
-                + participant.getLastHttpResponse()
-                + ") at "
-                + participant.getLastUpdatedAt());
-    lastResponseInformation.addClassName("lastResponse");
-    lastUpdatePanel.add(lastResponseInformation);
-
-    participantInfoPanel.add(availabilityPanel, lastUpdatePanel);
-    // end of right column
-
-    participantCard.add(avatarColumn, participantInfoPanel);
-
-    if (participant.getLastHttpResponse() > 299) {
-      participantCard.addClassName("failure");
-    }
-
-    return participantCard;
+                      verticalLayout.add(flexLayout);
+                      if (!participants.isEmpty()) {
+                        verticalLayout.add(attribution);
+                      }
+                      add(verticalLayout);
+                    }));
   }
 
   private HorizontalLayout createAttribution() {
     HorizontalLayout footer = new HorizontalLayout();
-    Span imgAttribution =
-        new Span(
-            "<a href=\"https://www.freepik.com/free-vector/animal-hipster-set_3975549.htm#query=animal%20avatars&position=11&from_view=keyword&track=ais\">Image by macrovector</a> on Freepik");
+    footer.setWidthFull();
+    footer.setJustifyContentMode(JustifyContentMode.CENTER);
+    footer.setAlignItems(Alignment.CENTER);
+    Anchor imgAttribution =
+        new Anchor(
+            "https://www.freepik.com/free-vector/animal-hipster-set_3975549.htm",
+            "Images by macrovector on Freepik");
     footer.add(imgAttribution);
     return footer;
   }
 
   @Override
   public void afterNavigation(AfterNavigationEvent event) {
-    grid.setItems(connectedParticipantsRepository.findAll());
+    refreshDashboardView();
   }
 }

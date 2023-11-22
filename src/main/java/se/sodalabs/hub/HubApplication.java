@@ -2,6 +2,7 @@ package se.sodalabs.hub;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.shared.communication.PushMode;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -17,9 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		servers = { @Server(url = "/", description = "Default Server URL") }
 )
 public class HubApplication implements AppShellConfigurator {
-
 	public static void main(String[] args) {
 		SpringApplication.run(HubApplication.class, args);
 	}
-
 }
