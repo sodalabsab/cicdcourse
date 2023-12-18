@@ -16,8 +16,9 @@
 .dashboard-view .card {
   background-color: var(--lumo-base-color);
   border-radius: var(--lumo-border-radius);
-  box-shadow: var(--lumo-box-shadow-xs);
+  box-shadow: var(--lumo-box-shadow-m);
   padding: calc(var(--lumo-space-s) * 1.5) var(--lumo-space-m);
+  margin: calc(var(--lumo-space-s) * 1.1) var(--lumo-space-m);
 }
 
 .dashboard-view .failure {
@@ -29,7 +30,8 @@
 }
 
 .dashboard-view img {
-  border-radius: 50%;
+  border-radius: 5%;
+  background: white;
   flex-shrink: 0;
   height: var(--lumo-size-m);
   margin-right: calc(var(--lumo-space-s) * 1.5);
@@ -38,41 +40,39 @@
 
 .dashboard-view .header {
   align-items: baseline;
+  border-bottom: 1px var(--lumo-tertiary-text-color) solid;
+}
+
+.dashboard-view .divider {
+  font-size: var(--lumo-font-size-xl);
+  color: var(--lumo-tertiary-text-color);
+  margin-left: var(--lumo-space-l);
+  margin-right: var(--lumo-space-l);
 }
 
 .dashboard-view .id {
   color: var(--lumo-tertiary-text-color);
   font-size: var(--lumo-font-size-s);
   font-weight: normal;
-  margin-left: var(--lumo-space-m);
-  margin-right: var(--lumo-space-m);
 }
 
 .dashboard-view .name {
   font-size: var(--lumo-font-size-xl);
   font-weight: normal;
-  margin-left: var(--lumo-space-m);
-  margin-right: var(--lumo-space-m);
 }
 
 .dashboard-view .heading {
   font-size: var(--lumo-font-size-l);
   font-weight: normal;
-  margin-left: var(--lumo-space-m);
-  margin-right: var(--lumo-space-m);
 }
 
 .dashboard-view .availability {
   font-size: var(--lumo-font-size-xl);
   font-weight: normal;
-  margin-left: var(--lumo-space-m);
-  margin-right: var(--lumo-space-m);
 }
 
 .dashboard-view .lastResponse {
   color: var(--lumo-tertiary-text-color);
   font-size: var(--lumo-font-size-m);
   font-weight: normal;
-  margin-left: var(--lumo-space-m);
-  margin-right: var(--lumo-space-m);
 }
