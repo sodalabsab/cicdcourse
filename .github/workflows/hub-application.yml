@@ -48,10 +48,11 @@ name: Build, Test and Deploy Hub
 
 on:
   workflow_dispatch:
-    branches-ignore:
-      - "main"
   push:
-    branches: [ "main" ]
+    branches: 
+      - "main" 
+    paths: 
+      - 'cloud-run-hub/**'
 
 env:
   PROJECT_ID: ci-cd-course-385719
