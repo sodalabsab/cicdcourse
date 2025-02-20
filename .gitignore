@@ -1,6 +1,6 @@
 HELP.md
 .gradle
-build/
+**/build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -36,11 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
-<<<<<<< HEAD
-
-=======
 ### vadin ###
-target/
->>>>>>> cloud-run-hub/main
-node_modules/
-frontend/generated/
+**/target/
+**/node_modules/
+**/frontend/generated/

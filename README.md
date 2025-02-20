@@ -2,9 +2,6 @@
 =======
 # CI/CD course
 This course will guide you through setting up and using a pipeline GitHub Actions and Google Cloud services that serves as a fundation in a CI/CD setup for a demoapplication. Below are detailed instructions for cloning the course code, setting up your local environment, configuring and integrating accounts, and deploying infrastructure and applications.
-
-# cloud-run-pipeline-demo
-
 ---
 
 ## Setup 1
@@ -32,7 +29,7 @@ This course will guide you through setting up and using a pipeline GitHub Action
    - Configure ssh access to GitHub by [following this instruction](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
 4. **Fork the course Repository into your GitHub Account**
-   - Go to [the course reporitory](https://github.com/sodalabsab/cloud-run-pipeline-demo.git)
+   - Go to [the course reporitory](https://github.com/sodalabsab/cicdcourse.git)
    - Select "Fork" to create your own disconnected version of the course code repository
    - Name the repository "cicdcourse" click on "Create fork"
 
@@ -64,6 +61,10 @@ This course will guide you through setting up and using a pipeline GitHub Action
 
 ### This is the end of the first setup session
 Now the course will continue
+
+## Lab 1
+Let´s build and setup the system locally.
+
 
 
 # Setup 2 - move to the cloud
