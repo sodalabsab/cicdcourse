@@ -117,82 +117,15 @@ Replace YOUR_PROJECT_ID with the actual ID of your Google Cloud project. You can
 You need to configure the following GitHub Secrets in your repository for secure deployment. These secrets are referenced in the actions workflows when pushing docker image and deploying to Google Cloud Run.
 
 #### Steps to Configure Secrets
-
-1. Go to your repository's **Settings**.
-2. Navigate to **Secrets and variables** > **Actions**.
-3. Add the following secrets:
-   - `': Your Azure subscription ID.
-   - `AZURE_RESOURCE_GROUP`: Provide a suitable name of the resource groups that will be created and used for the labs.
-   - `DOCKERHUB_PASSWORD`: Your password to dockerhub.com (used for rebuilding and pushing a new version of `my-website`) 
-   - `DOCKERHUB_IMAGE`: The name of your image that ws pushed to dockerhub.com in lab1. It will be used as input into the bicep file that sets up the labs in azure.  
+ 
 
 ### Setting Up Azure Credentials in GitHub
-
-To deploy Azure resources using GitHub Actions, you need to create and configure Azure credentials securely in your GitHub repository. We need to create a service principal (server account) in Azure and give to GitHub to allow access from GitHub Actions into Azure. Here's how to do it:
-
-1. **Create a Service Principal**
-   - Run the following command to create a new service principal and capture the output, which includes your `appId`, `password`, and `tenant`:
-     ```bash
-     az account show --query id --output tsv 
-     az ad sp create-for-rbac --name "github-actions-deploy" --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID> --sdk-auth
-     ```
-   - Replace `<AZURE_SUBSCRIPTION_ID>` with your actual Azure subscription ID from the first command. (You can also find the subscription ID in the portal)
-   - The output will look like this:
-     ```json
-     {
-       "appId": "YOUR_APP_ID",
-       "displayName": "github-actions-deploy",
-       "password": "YOUR_PASSWORD",
-       "tenant": "YOUR_TENANT_ID"
-     }
-     ```
 
 3. **Store Azure Credentials in GitHub Secrets**
    - Go to your GitHub repository and navigate to **Settings**.
    - Under **Secrets and variables**, click on **Actions**.
-   - Click **New repository secret** and add a secret named `AZURE_CREDENTIALS`.
-   - Past in the JSON ouput from step 2 so that `AZURE_CREDENTIALS` secret is a JSON string containing your credentials.
-
----
-
-## Running the Azure labs
-
-The GitHub Actions workflow `.github/workflows/lab-bicep-deploy.yml` is designed to deploy Azure resources using Bicep files located in specific directories for Labs 3, 4, and 5. It allows you to specify which lab's Bicep file to deploy using manual workflow dispatch.
-This allows you to trigger the workflow and provide an input specifying the lab number (`labPath`), which points to the directory where the Bicep file is located. By default, it deploys the Bicep file for `lab3`.
-
-### Environment Variables
-
-- `AZURE_SUBSCRIPTION_ID`: Retrieved from GitHub Secrets and used to identify your Azure subscription.
-- `AZURE_CREDENTIALS`
-- `RESOURCE_GROUP`: The name of the Azure resource group, dynamically constructed using the lab path input. It appends the lab number to the base resource group name.
-- `LOCATION`: Set to `swedencentral`, which is the default location for all resources.
-
-
-### Jobs and Steps
-
-The workflow contains a single job, `deploy`, that runs on an `ubuntu-latest` virtual environment and executes the following steps:
-
-1. **Checkout Repository**
-   - **Action**: `actions/checkout@v2`  
-     This step checks out the code from the repository, making the Bicep files available for deployment.
-
-2. **Log in to Azure**
-   - **Action**: `azure/login@v1`  
-     This step logs into your Azure account using the credentials stored in GitHub Secrets (`AZURE_CREDENTIALS`). This is necessary to authenticate and interact with Azure resources.
-
-3. **Ensure the Resource Group Exists**
-   - **Command**: 
-     ```bash
-     az group create --name ${{ env.RESOURCE_GROUP }} --location ${{ env.LOCATION }} --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }} --tags Project=scalingCloudLab
-     ```
-   - **Description**: This command creates the resource group if it does not already exist. It uses the `RESOURCE_GROUP` environment variable, which incorporates the lab path, and assigns a tag `Project=scalingCloudLab` to the resource group.
-
-4. **Deploy Bicep File for the Specified Lab**
-   - **Command**:
-     ```bash
-     az deployment group create --resource-group ${{ env.RESOURCE_GROUP }} --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }} --template-file ${{ github.event.inputs.labPath }}/lab.bicep --mode Incremental
-     ```
-   - **Description**: This command deploys the Bicep file for the specified lab. It uses the `az deployment group create` command to deploy the infrastructure defined in the `lab.bicep` file located in the directory specified by the `labPath` input. The `--mode Incremental` flag ensures that existing resources are not deleted and only new or updated resources are deployed.
+   - Click **New repository secret** and add a secret named `GCP??`.
+   - Past in the JSON ouput from step 2 so that `GCP??` secret is a JSON string containing your credentials.
 
 ---
 
@@ -203,8 +136,6 @@ The workflow contains a single job, `deploy`, that runs on an `ubuntu-latest` vi
    - Select the **Lab Bicep Deployment** workflow.
    - Click on **Run workflow** and specify the `labPath` input (e.g., `lab3`, `lab4`, or `lab5`) to choose which lab's Bicep file to deploy.
 
-2. **Bicep Deployment**:
-   - The workflow will create or update the Azure resource group and then deploy the infrastructure using the appropriate Bicep file.
 
 ---
 
@@ -221,13 +152,7 @@ You can deploy the test web application by:
 1. **Pushing a Change**: Any change in the repository (e.g., code or configuration updates) will automatically trigger the deployment workflow.
 2. **Manually Triggering**: Use the **`webapp-workflow`** in GitHub Actions to manually deploy the web app.
 
-This will build and deploy the web application to your Azure environment.
-
----
-
-## Tearing Down the Environment
-
-
+This will build and deploy the web application to your Google clooud run environment.
 
 
 ### Build and Test
@@ -249,7 +174,7 @@ Alternatively, you can build and run it in a container:
   curl localhost:8080
   ```
 
-Once running, you will find ways to interact with the application at http://localhost:8081/.
+Once running, you will find ways to interact with the application at http://localhost:8080/.
 
 </details>
 

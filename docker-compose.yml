@@ -1,0 +1,30 @@
+
+services:
+  cloud-run-hub:
+    build:
+      context: ./cloud-run-hub
+      dockerfile: Dockerfile
+    container_name: cloud-run-hub
+    ports:
+      - "8080:8080"  # Expose port 8080 to the host
+    networks:
+      - cloud-run-network
+  cloud-run-pipeline-demo:
+    build:
+      context: ./cloud-run-pipeline-demo
+      dockerfile: Dockerfile
+    container_name: cloud-run-pipeline-demo
+    ports:
+      - "8081:8081"  # Expose port 8080 in container to 8081 on the host
+    networks:
+      - cloud-run-network
+    depends_on:
+      - cloud-run-hub
+    environment:
+      - HUB_ADDRESS=http://cloud-run-hub:8080
+      - GITHUB_REPOSITORY_OWNER=Local-owner
+      - DOCKER_IMAGE_TAG=Local-image
+
+networks:
+  cloud-run-network:
+    driver: bridge
