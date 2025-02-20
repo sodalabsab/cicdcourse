@@ -181,7 +181,7 @@ jobs:
             GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
             DOCKER_IMAGE_TAG=${{ env.SERVICE }}:${{ github.sha }}
           tag: 'production'
-          flags: '--max-instances=1 --allow-unauthenticated'
+          flags: '--max-instances=1 --allow-unauthenticated  --revision-suffix=${{ github.run_number }}'
 
       - name: Show Output
         run: echo ${{ steps.deploy-prod.outputs.url }}
