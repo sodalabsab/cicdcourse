@@ -1,5 +1,8 @@
 FROM azul/zulu-openjdk:17-latest
 
+# Install curl for health check in docker-compose file for local development
+RUN apt-get update && apt-get install -y curl
+
 COPY . /app
 
 WORKDIR /app

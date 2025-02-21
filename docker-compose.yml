@@ -7,6 +7,11 @@ services:
     container_name: cloud-run-hub
     ports:
       - "8080:8080"  # Expose port 8080 to the host
+    healthcheck:
+      test: "curl -f http://localhost:8080"
+      interval: 15s
+      timeout: 1m
+      retries: 2
     networks:
       - cloud-run-network
   cloud-run-pipeline-demo:
@@ -19,7 +24,8 @@ services:
     networks:
       - cloud-run-network
     depends_on:
-      - cloud-run-hub
+      cloud-run-hub:
+        condition: service_healthy
     environment:
       - HUB_ADDRESS=http://cloud-run-hub:8080
       - GITHUB_REPOSITORY_OWNER=Local-owner

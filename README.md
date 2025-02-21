@@ -1,12 +1,11 @@
-# cicdcourse
-=======
+
 # CI/CD course
 This course will guide you through setting up and using a pipeline GitHub Actions and Google Cloud services that serves as a fundation in a CI/CD setup for a demoapplication. Below are detailed instructions for cloning the course code, setting up your local environment, configuring and integrating accounts, and deploying infrastructure and applications.
 ---
 
 ## Setup 1
 
-### Tools and Accounts Setup for lab 1 and 2
+### Accounts and local development environemt
 
 1. **Microsoft Visual Studio Code (VS Code)**
    - Download and install from: [https://code.visualstudio.com/](https://code.visualstudio.com/)
@@ -53,9 +52,9 @@ This course will guide you through setting up and using a pipeline GitHub Action
    - Donload and install from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
    - Ensure Docker is running and verify installation:
      ```bash
-     docker --version
+     docker info
      ```
-
+    You should see lots of information about the docker environment running on your machine. 
 7. **Open the code in VS Code**
    - Start VS Code and open the directory by selecting "Open folder..." from the File meny
 
@@ -65,7 +64,15 @@ Now the course will continue
 ## Lab 1
 Let´s build and setup the system locally.
 
+1. **Make sure Docker i running**
+  - Verify that Docker is running locally by 
+     ```bash
+     docker info
+     ```
+    This command will show lot´s of information about the docker environment. It there is no ERROR message, then everything is good. 
 
+2. **Build the applications locally**
+  - Use the docker-compose.yml file at the root of the repository to build booth applications at once. 
 
 # Setup 2 - move to the cloud
 
