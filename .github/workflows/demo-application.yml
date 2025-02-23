@@ -150,7 +150,7 @@ jobs:
         run: echo ${{ steps.deploy-test.outputs.url }}
   
   test-and-verify:
-    runs-on: ubunt-latest
+    runs-on: ubuntu-latest
     needs: deploy-test
     steps:
       - name: Test and verify
