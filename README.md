@@ -73,12 +73,20 @@ Let´s build and setup the system locally.
 
 2. **Build the applications locally**
   - Use the docker-compose.yml file at the root of the repository to build booth applications at once. 
+  To start the system use this command:
+     ```bash
+     docker-compose up --build
+     ```  
+  This will build booth docker images (using their individual Docker files) and start them in one container each in docker desktop
+
+3. **Verify**
+  - Go to http://localhost:8080 and 8081 respectively and verify that booth the client and the hub is running. 
 
 # Setup 2 - move to the cloud
 
 This part explores some of the avaliable tools to build, deploy and monitor applications in Google. There are a few things required to be setup to be able to run the labs. 
 
-1# Setting up your Google Cloud Environment
+1 **Setting up your Google Cloud Environment**
 
 This guide outlines the steps to set up your Google Cloud environment, including creating an account and configuring the Google Cloud CLI.
 
