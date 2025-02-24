@@ -100,6 +100,18 @@ This guide outlines the steps to set up your Google Cloud environment, including
 
 - **Create a Project:** Create a project in the Google Cloud Console. Projects are the way you organize your Google Cloud resources.
 
+- **Create an Artifact repository :** Go to the dashboard and seach for "Artifact repository". Create one and call it "demo". This step requires a billing account that will ask for credit card details. It will be for free and after the course you can remove the details.
+
+- **Create a service account :** This will allow GitHub action to manage the deployment in GCP. Go to IAM. Create a "Service account" and give it a name - for instance "github-actions".
+The service account need to have several rights, including: 
+- Artifact Registry Create-on-Push Writer
+- Artifact Registry Writer
+- Cloud Run Admin
+- Cloud Run Service Agent
+- Service Account Token Creator
+Once it is created, open it and create an access key. Select "Keys" in the top menue and "Add key". Create a new Json key and download the generated file containing the key.
+
+
 ## 2. (Optional) Google Cloud CLI (gcloud)
 
 - **Install the gcloud CLI:** [https://cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install) Follow the instructions for your operating system.
@@ -132,42 +144,14 @@ Replace YOUR_PROJECT_ID with the actual ID of your Google Cloud project. You can
 You need to configure the following GitHub Secrets in your repository for secure deployment. These secrets are referenced in the actions workflows when pushing docker image and deploying to Google Cloud Run.
 
 #### Steps to Configure Secrets
- 
-
-### Setting Up Azure Credentials in GitHub
-
-3. **Store Azure Credentials in GitHub Secrets**
-   - Go to your GitHub repository and navigate to **Settings**.
-   - Under **Secrets and variables**, click on **Actions**.
-   - Click **New repository secret** and add a secret named `GCP??`.
-   - Past in the JSON ouput from step 2 so that `GCP??` secret is a JSON string containing your credentials.
+Go to your GitHub account and the repository you have cloned from the course repo.
+- Select settings->Secret and variables->Actions. 
+- Add a new repository secret called GCP_CREDENTIALS and paste the contect of the key-file intor the "Secret" field. 
+- Create a variable (it is in another tab than secrets) called PROJECT_ID and as value, find the ID of the GCP project. Ex: "cicdcourse-32242
+You will find the ID in GCP if you click on the projekt box at the top of the GCP dashboard. 
 
 ---
 
-### How to Use
-
-1. **Trigger the Workflow Manually**:
-   - Navigate to the **Actions** tab in your GitHub repository.
-   - Select the **Lab Bicep Deployment** workflow.
-   - Click on **Run workflow** and specify the `labPath` input (e.g., `lab3`, `lab4`, or `lab5`) to choose which lab's Bicep file to deploy.
-
-
----
-
-### Notes
-
-- **Resource Group Naming**: The resource group name is constructed dynamically, combining a base name with the lab number. This helps in organizing resources by lab.
-- **Incremental Deployment**: The `--mode Incremental` flag ensures that only changes are applied, preventing the deletion of existing resources.
-
-This workflow provides a structured and automated way to manage Azure deployments for multiple labs, making it easy to set up and scale cloud infrastructure.
-## Deploying the Test WebApp
-
-You can deploy the test web application by:
-
-1. **Pushing a Change**: Any change in the repository (e.g., code or configuration updates) will automatically trigger the deployment workflow.
-2. **Manually Triggering**: Use the **`webapp-workflow`** in GitHub Actions to manually deploy the web app.
-
-This will build and deploy the web application to your Google clooud run environment.
 
 
 ### Build and Test
