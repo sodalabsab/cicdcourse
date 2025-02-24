@@ -55,7 +55,7 @@ on:
       - 'cloud-run-hub/**'
 
 env:
-  PROJECT_ID: ci-cd-course-385719
+  PROJECT_ID: ${{ vars.PROJECT_ID }} 
   GAR_LOCATION: europe-north1
   SERVICE: ci-cd-course-hub
   REGION: europe-north1
