@@ -111,7 +111,6 @@ The service account need to have several rights, including:
 - Service Account Token Creator
 Once it is created, open it and create an access key. Select "Keys" in the top menue and "Add key". Create a new Json key and download the generated file containing the key.
 
-
 ## 2. (Optional) Google Cloud CLI (gcloud)
 
 - **Install the gcloud CLI:** [https://cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install) Follow the instructions for your operating system.
@@ -152,6 +151,38 @@ You will find the ID in GCP if you click on the projekt box at the top of the GC
 
 ---
 
+## Lab 2 - deploy to production
+- Go to your GitHub repository and click on "Actions". Enable GitHub actions. This will scan the repository and add the workflow definitions under .github/workflows
+- Select "Build, test and deploy Demo application" and click on "Run workflow" to trigger a pipeline run manually.
+Follow the progress by clicking on the newly started pipeline instance and expand the logs.
+If there are any errors the pipeline will stop. Otherwise, this will result in two instances of the demo applation running in your GCP environment. 
+- In the pipeline find the “Show Output” step
+this reveals the URL for your personal dashboard - go to it and register your client
+- Go to GCP dashboard and the logs of the production application to moke sure it has successfully registered with the hub. 
+
+
+## Lab 3 - Setup a local runner
+Follow the instructions on this page to download and setup a local runner on your comupter: 
+https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
+
+- Open the workflow definition for the demo application ./github/workflows/demo-application.yml 
+- Change 
+```bash
+jobs:
+  build-and-unittest:
+    runs-on: ubuntu-latest
+```
+to:
+```bash
+jobs:
+  build-and-unittest:
+    runs-on: self-hosted
+``` 
+Commit and push the change to GitHub:
+```bash
+git commit -m "Changed to self-hosted
+git push
+``` 
 
 
 ### Build and Test
