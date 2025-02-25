@@ -30,6 +30,7 @@ This course will guide you through setting up and using a pipeline GitHub Action
 4. **Fork the course Repository into your GitHub Account**
    - Go to [the course reporitory](https://github.com/sodalabsab/cicdcourse.git)
    - Select "Fork" to create your own disconnected version of the course code repository
+   - Marke sure to uncheck "Copy the main branch only" there is a branch in there we will use later
    - Name the repository "cicdcourse" click on "Create fork"
 
 5. **Download the repository localy**
@@ -59,7 +60,7 @@ This course will guide you through setting up and using a pipeline GitHub Action
    - Start VS Code and open the directory by selecting "Open folder..." from the File meny
 
 ### This is the end of the first setup session
-Now the course will continue
+Now the course will continue with some more slides
 
 ## Lab 1
 Let´s build and setup the system locally.
@@ -77,7 +78,7 @@ Let´s build and setup the system locally.
      ```bash
      docker-compose up --build
      ```  
-  This will build booth docker images (using their individual Docker files) and start them in one container each in docker desktop
+  This will build booth docker images (using their individual Docker files) and start them in one container each in docker desktop. It will setup a small network so the applications can talk to eachother 
 
 3. **Verify**
   - Go to http://localhost:8080 and 8081 respectively and verify that booth the client and the hub is running. 
@@ -183,7 +184,9 @@ Commit and push the change to GitHub:
 git commit -m "Changed to self-hosted
 git push
 ``` 
+- Go to github and manually trigger another pipeline run. You will se a log in the local runner when GitHub sends a job to it for execution.
 
+Lab 4 - API versions
 
 ### Build and Test
 
