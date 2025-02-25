@@ -5,6 +5,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import se.sodalabs.hub.repository.RegisteredParticipant;
+import se.sodalabs.hub.repository.SubmittedFeedback;
 
 public class ParticipantCard extends VerticalLayout {
 
@@ -49,14 +50,39 @@ public class ParticipantCard extends VerticalLayout {
       participantInfoPanel.add(exerciseHappiness);
     }
 
+    if (registeredParticipant.getSubmittedFeedbackForExercise(1) != null) {
+      Span secondExerciseHappiness = getSecondExerciseHappiness(registeredParticipant);
+      participantInfoPanel.add(secondExerciseHappiness);
+    }
+
     cardContent.add(participantInfoPanel);
     this.add(cardContent);
   }
 
   private static Span getFirstExerciseFeedbackSpan(RegisteredParticipant registeredParticipant) {
-    int happinessScore = registeredParticipant.getSubmittedFeedback().getHappinessScore();
+    return getExerciseFeedbackSpan(registeredParticipant, 0, "1️⃣");
+  }
+
+  private static Span getSecondExerciseHappiness(RegisteredParticipant registeredParticipant) {
+    return getExerciseFeedbackSpan(registeredParticipant, 1, "2️⃣");
+  }
+
+  private static Span getExerciseFeedbackSpan(
+      RegisteredParticipant registeredParticipant, int exerciseIndex, String exerciseIndicator) {
+    SubmittedFeedback exerciseFeedback =
+        registeredParticipant.getSubmittedFeedbackForExercise(exerciseIndex);
+
+    int happinessScore = exerciseFeedback.getHappinessScore();
     String feedbackIndicator = happinessScore > 49 ? "👍" : "👎";
+
+    String hasCommentIndicator = exerciseFeedback.getComment() == null ? "" : "💬";
+
     return new Span(
-        feedbackIndicator.concat(String.valueOf(happinessScore)).concat(" % exercise happiness"));
+        exerciseIndicator
+            .concat(" ")
+            .concat(feedbackIndicator)
+            .concat(hasCommentIndicator)
+            .concat(String.valueOf(happinessScore))
+            .concat(" % exercise happiness"));
   }
 }
