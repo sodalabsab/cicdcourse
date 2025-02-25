@@ -142,7 +142,7 @@ jobs:
           env_vars: |
             GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
             DOCKER_IMAGE_TAG=${{ env.SERVICE }}:${{ github.sha }}
-            HUB_ADDRESS=https://staging---ci-cd-course-hub-aeyvkm6j4q-lz.a.run.app/
+#            HUB_ADDRESS=https://staging---ci-cd-course-hub-aeyvkm6j4q-lz.a.run.app/
           tag: 'staging'
           flags: '--max-instances=1 --allow-unauthenticated'
 
