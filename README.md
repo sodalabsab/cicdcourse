@@ -186,7 +186,9 @@ git push
 ``` 
 - Go to github and manually trigger another pipeline run. You will se a log in the local runner when GitHub sends a job to it for execution.
 
-Lab 4 - API versions
+## Lab 4 - API versions
+Make sure the central hub is running on the correct version. 
+Create a pull request in github to merge the api-v2 branch to main. Go to "Pull requests" in the menue. Select "Create pull request" and select api-v2 in the right side (going in to main). 
 
 ### Build and Test
 

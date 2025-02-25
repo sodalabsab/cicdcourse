@@ -36,6 +36,14 @@ docker run --rm -p8080:8080 hub
 
 if you prefer running a Docker container.
 
+or
+
+```
+docker-compose up 
+```
+
+in the root directory of this repo to start booth the hub and a demo client locally.
+
 ## Development Practices
 
 🔡 Follow the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) for
