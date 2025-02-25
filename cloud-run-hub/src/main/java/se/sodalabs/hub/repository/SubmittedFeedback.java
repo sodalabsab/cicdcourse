@@ -4,18 +4,15 @@ import com.google.gson.Gson;
 
 public class SubmittedFeedback {
   private String timestamp;
-  private int exerciseIndex;
   private int happinessScore;
-  private String comment;
 
   public SubmittedFeedback() {}
 
   public SubmittedFeedback(
-      String timestamp, int exerciseIndex, int happinessScore, String comment) {
+      String timestamp,
+      int happinessScore) {
     this.timestamp = timestamp;
-    this.exerciseIndex = exerciseIndex;
     this.happinessScore = happinessScore;
-    this.comment = comment;
   }
 
   public String getTimestamp() {
@@ -32,22 +29,6 @@ public class SubmittedFeedback {
 
   public void setHappinessScore(int happinessScore) {
     this.happinessScore = happinessScore;
-  }
-
-  public int getExerciseIndex() {
-    return exerciseIndex;
-  }
-
-  public void setExerciseIndex(int exerciseIndex) {
-    this.exerciseIndex = exerciseIndex;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
   }
 
   public String toJsonString() {

@@ -1,9 +1,6 @@
 package se.sodalabs.hub.repository;
 
 import com.google.gson.Gson;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class RegisteredParticipant {
@@ -11,17 +8,19 @@ public class RegisteredParticipant {
   private String name;
   private String registeredAt;
   private String avatarImage;
-  private Map<Integer, SubmittedFeedback> submittedFeedback = new HashMap<>();
+  private SubmittedFeedback submittedFeedback;
 
   public RegisteredParticipant() {
     this.avatarImage = generateRandomAvatarImage();
   }
 
-  public RegisteredParticipant(String id, String name, String registeredAt) {
+  public RegisteredParticipant(
+      String id, String name, String registeredAt, SubmittedFeedback submittedFeedback) {
     this.id = id;
     this.name = name;
     this.registeredAt = registeredAt;
     this.avatarImage = generateRandomAvatarImage();
+    this.submittedFeedback = submittedFeedback;
   }
 
   public String getId() {
@@ -57,20 +56,11 @@ public class RegisteredParticipant {
   }
 
   public SubmittedFeedback getSubmittedFeedback() {
-    return submittedFeedback.get(0);
-  }
-
-  public SubmittedFeedback getSubmittedFeedbackForExercise(int exerciseIndex) {
-    return submittedFeedback.get(exerciseIndex);
+    return submittedFeedback;
   }
 
   public void setSubmittedFeedback(SubmittedFeedback submittedFeedback) {
-    // Used for first exercise, where no explicit index is given
-    this.submittedFeedback.put(0, submittedFeedback);
-  }
-
-  public void addSubmittedFeedback(SubmittedFeedback submittedFeedback) {
-    this.submittedFeedback.put(submittedFeedback.getExerciseIndex(), submittedFeedback);
+    this.submittedFeedback = submittedFeedback;
   }
 
   private String generateRandomAvatarImage() {
