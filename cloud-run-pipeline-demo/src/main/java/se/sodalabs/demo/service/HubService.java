@@ -65,6 +65,7 @@ public class HubService {
 
     this.lastRegisteredAt =
         LocalDateTime.now().format(DateTimeFormatter.ofPattern("y-MM-dd HH:mm:ss"));
+    logger.info("Registering a new participant at " + lastRegisteredAt + " with id " + id + " and name " + name + " to the hub at: " + hubAddress);
     return restTemplate.exchange(
         hubAddress + "/api/v1/participant/", HttpMethod.POST, request, String.class);
   }
