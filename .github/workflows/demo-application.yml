@@ -181,8 +181,9 @@ jobs:
           env_vars: |
             GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
             DOCKER_IMAGE_TAG=${{ env.SERVICE }}:${{ github.sha }}
+            HUB_ADDRESS=https://ci-cd-course-hub-aeyvkm6j4q-lz.a.run.app/
           tag: 'production'
-          flags: '--clear-env-vars --max-instances=1 --allow-unauthenticated  --revision-suffix=${{ github.run_number }}'
+          flags: '--max-instances=1 --allow-unauthenticated  --revision-suffix=${{ github.run_number }}'
 
       - name: Show Output
         run: echo ${{ steps.deploy-prod.outputs.url }}
