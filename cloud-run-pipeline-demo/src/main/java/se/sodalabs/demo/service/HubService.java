@@ -12,12 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-//import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import se.sodalabs.demo.domain.FeedbackDTO;
 import se.sodalabs.demo.domain.ParticipantDTO;
 
 @Service
@@ -90,7 +91,18 @@ public class HubService {
         String.class);
   }
 
-  /* 
+  public ResponseEntity<String> sendFeedback(FeedbackDTO feedback) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Content-Type", "application/json");
+    HttpEntity<FeedbackDTO> request = new HttpEntity<>(feedback, headers);
+
+    return restTemplate.exchange(
+        hubAddress + "/api/v2/participant/" + id + "/feedback",
+        HttpMethod.POST,
+        request,
+        String.class);
+  }
+
   private static ResponseEntity<String> returnParsedHubResponse(
       ResponseEntity<String> responseFromHub) {
     if (responseFromHub.getStatusCode().is2xxSuccessful()) {
@@ -100,7 +112,7 @@ public class HubService {
     } else {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }*/
+  }
 
   public String getLastRegisteredAt() {
     return lastRegisteredAt;
