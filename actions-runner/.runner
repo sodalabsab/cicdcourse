@@ -1,0 +1,9 @@
+﻿{
+  "agentId": 2,
+  "agentName": "OLIVERSDATOR",
+  "poolId": 1,
+  "poolName": "Default",
+  "serverUrl": "https://pipelinesghubeus25.actions.githubusercontent.com/L0VVQTe0x0meRjKeeOfr9VdmwYtuGGMXgUK6iHiFEwYOYGopwh/",
+  "gitHubUrl": "https://github.com/Olivermoberg98/cicdcourse",
+  "workFolder": "_work"
+}
