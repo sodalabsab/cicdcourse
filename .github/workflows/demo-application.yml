@@ -74,10 +74,10 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
           cache: 'gradle'
-      - name: Run build with Gradle Wrapper
+      - name: Grant Execute Permission (Windows)
+        if: runner.os == 'Windows'
         working-directory: ./cloud-run-pipeline-demo
         run: icacls gradlew /grant Everyone:RX
-        shell: powershell
 
   docker-build-and-push:
     # Add 'id-token' with the intended permissions for workload identity federation
@@ -96,10 +96,10 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
           cache: 'gradle'
-      - name: Run build with Gradle Wrapper
+      - name: Run build with Gradle Wrapper (Linux)
         working-directory: ./cloud-run-pipeline-demo
-        run: ./gradlew test build
-        shell: powershell
+        run: chmod +x gradlew && ./gradlew test build
+        shell: bash
 
       - name: Google Auth
         id: auth
