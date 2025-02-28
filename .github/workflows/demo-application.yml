@@ -76,7 +76,8 @@ jobs:
           cache: 'gradle'
       - name: Run build with Gradle Wrapper
         working-directory: ./cloud-run-pipeline-demo
-        run: chmod a+x gradlew && ./gradlew test build
+        run: icacls gradlew /grant Everyone:RX
+        shell: powershell
 
   docker-build-and-push:
     # Add 'id-token' with the intended permissions for workload identity federation
@@ -97,7 +98,8 @@ jobs:
           cache: 'gradle'
       - name: Run build with Gradle Wrapper
         working-directory: ./cloud-run-pipeline-demo
-        run: chmod a+x gradlew && ./gradlew test build
+        run: ./gradlew test build
+        shell: powershell
 
       - name: Google Auth
         id: auth
