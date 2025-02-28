@@ -58,7 +58,7 @@ on:
 env:
   PROJECT_ID: ${{ vars.PROJECT_ID }} 
   GAR_LOCATION: europe-north1
-  SERVICE: demo-Hadishad
+  SERVICE: demo-hadishad
   REGION: europe-north1
   REPOSITORY: demo
 
