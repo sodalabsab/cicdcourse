@@ -58,13 +58,13 @@ on:
 env:
   PROJECT_ID: ${{ vars.PROJECT_ID }} 
   GAR_LOCATION: europe-north1
-  SERVICE: demo-${{ github.repository_owner }}
+  SERVICE: demo-hadishad
   REGION: europe-north1
   REPOSITORY: demo
 
 jobs:
   build-and-unittest:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v4
@@ -74,9 +74,10 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
           cache: 'gradle'
-      - name: Run build with Gradle Wrapper
+      - name: Grant Execute Permission (Windows)
+        if: runner.os == 'Windows'
         working-directory: ./cloud-run-pipeline-demo
-        run: chmod a+x gradlew && ./gradlew test build
+        run: icacls gradlew /grant Everyone:RX
 
   docker-build-and-push:
     # Add 'id-token' with the intended permissions for workload identity federation
@@ -95,9 +96,10 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
           cache: 'gradle'
-      - name: Run build with Gradle Wrapper
+      - name: Run build with Gradle Wrapper (Linux)
         working-directory: ./cloud-run-pipeline-demo
-        run: chmod a+x gradlew && ./gradlew test build
+        run: chmod +x gradlew && ./gradlew test build
+        shell: bash
 
       - name: Google Auth
         id: auth
