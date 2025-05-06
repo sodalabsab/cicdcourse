@@ -1,0 +1,25 @@
+# This file utilizes environment variables to populate the variables needed.
+services:
+  runner:
+    image: ${IMAGE}
+    restart: always
+    # The environment variables are passed to the container at runtime.
+    environment:
+      - USERNAME=${USERNAME}
+      - REPOSITORY=${REPOSITORY}
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
+    # GitHub runners can only run one job at a time.
+    # If you want more jobs to run simultaniously and your hardware permits
+    # you can run multiple runners by changing replicas.
+    deploy:
+      mode: replicated
+      replicas: 1
+      # The following resources are to be considered as a "small" runner setup
+      # Feel free to adjust the resources to your needs.
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
