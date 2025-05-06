@@ -1,4 +1,4 @@
 IMAGE=<image-name:tag>
 USERNAME=<your-username>
-REPO=<your-repository-name>
+REPOSITORY=<your-repository-name>
 ACCESS_TOKEN=<your-github-token>
