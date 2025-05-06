@@ -229,7 +229,8 @@ We will take a more platform agnostic path due ot the fact that we already have 
 
 To begin with we need to create a .env file locally where we store variables, go ahead and rename the `envTemplate` file to `.env` one in the github-runner directory.
 
-Populate the `IMAGE` variable with a name, for example *github-runner:local*, `USERNAME` with your github username and `REPOSITORY` with the current repository name. 
+Populate the `IMAGE` variable with a name, for example *github-runner:local*, `USERNAME` with your github username and `REPOSITORY` with the current repository name.
+The `TARGETPLATFORM` variable should be either **arm64** (Apple Mac) or **x64** (PC).
 
 After this we need to visit GitHub UI and set up an Personal Access Token.
 
@@ -243,22 +244,43 @@ After this we need to visit GitHub UI and set up an Personal Access Token.
 
 Now view the `Dockerfile`, `docker-compose.yml` and `start.sh` and read the explanations on what is going on in these files.
 
+When we have done this we need to prepare and *source* the .env file to the local environment.
 
 ```bash
 # Navigate to the github-runner directory
-# Source the .env file
+# For Mac users, download dos2unix() to deal with line endings problem:
+brew install dos2unix
+# Or any other package manager if you are on Linux to install dos2unix
+# Run it on the .env file to ensure line ending compability:
+dos2unix .env
+
+#Sourcing the .env to the local environment variables:
 source .env
+```
+Or windows powershell:
+
+```powershell
+# Dealing with the line ending issues:
+(Get-Content .env -Raw).Replace("`r`n", "`n") | Set-Content -NoNewline .env
+
 # For windows users that are not using GitBash, use the following in Powershell:
+# To source the .env file to environment
 Get-Content .env | ForEach-Object { $env:$($_.Split('=')[0]) = $_.Split('=')[1] }
+```
+
+Now we are ready to build and deploy the runners in a docker setting by using the following commands:
+
+```bash
+
 
 # Build the image using multiarch to adhere to ARM64 architecture
 # Tag and send it to the artifact repository
-docker build -t ${IMAGE} .
+docker build --build-arg TARGETPLATFORM=${TARGETPLATFORM} -t ${IMAGE} .
 
 # Deploy the image
 docker-compose up -d
 
-# And pull down the deployment
+# And pull down the deployment and execute the cleanup script that unregisters the runner
 docker-compose down
 ```
 
@@ -266,7 +288,6 @@ Now visit your repository on GitHub.
 Enter Settings -> Actions -> Runners
 
 And you should now see your runner with the name "docker-runner-<short-sha>"
-
 
 - Open the workflow definition for the demo application ./github/workflows/demo-application.yml 
 You can do it locally in VS Code or directly in the GitHub UI.

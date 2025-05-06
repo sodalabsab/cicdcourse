@@ -36,9 +36,9 @@ WORKDIR /home/docker/actions-runner
 # We also install the dependencies required to run the runner
 # We set the ownership to the docker user and group
 # Finally we remove the tarball to save space on the image.
-RUN curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz && \
-    tar xzf ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz && \
-    rm -f ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz && \
+RUN curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${TARGETPLATFORM}-${RUNNER_VERSION}.tar.gz && \
+    tar xzf ./actions-runner-linux-${TARGETPLATFORM}-${RUNNER_VERSION}.tar.gz && \
+    rm -f ./actions-runner-linux-${TARGETPLATFORM}-${RUNNER_VERSION}.tar.gz && \
     chown -R docker ~docker /home/docker && \
     /home/docker/actions-runner/bin/installdependencies.sh
 
