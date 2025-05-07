@@ -44,7 +44,7 @@ Or windows powershell:
 Get-Content .env | ForEach-Object { $env:$($_.Split('=')[0]) = $_.Split('=')[1] }
 ```
 
-Now we are ready to build and deploy the runners in a docker setting by using the following commands:
+Now we are ready to build and deploy the runners in a docker container by using the following commands:
 
 ```bash
 
