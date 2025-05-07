@@ -40,3 +40,6 @@ out/
 **/target/
 **/node_modules/
 **/frontend/generated/
+
+### environment ###
+.env

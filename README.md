@@ -1,7 +1,8 @@
 
 # CI/CD course
+
 This course will guide you through setting up and using a pipeline GitHub Actions and Google Cloud services that serves as a fundation in a CI/CD setup for a demoapplication. Below are detailed instructions for cloning the course code, setting up your local environment, configuring and integrating accounts, and deploying infrastructure and applications.
----
+
 
 ## Setup 1
 
@@ -12,13 +13,17 @@ This course will guide you through setting up and using a pipeline GitHub Action
    - Install helpful extensions: Docker and Git.
 
 2. **Git (if that is not already on your computer)**
+
    - Download and install from: [https://git-scm.com/](https://git-scm.com/)
    - Configure Git with your name and email:
+
      ```bash
-     git config --global user.name "Your Name"
-     git config --global user.email "your.email@example.com"
+     git config --global user.name "<Your Name>"
+     git config --global user.email "<your.email@example.com>"
      ```
+
    - Verify Git installation:
+
      ```bash
      git --version
      ```
@@ -31,40 +36,63 @@ This course will guide you through setting up and using a pipeline GitHub Action
   
     Start by creating a fork of this repository under your own GitHub account. From there you can
 experiment freely
+
    - Go to [the course reporitory](https://github.com/sodalabsab/cicdcourse.git)
    - Select "Fork" to create your own disconnected version of the course code repository
-   - Marke sure to uncheck "Copy the main branch only" there is a branch in there we will use later
+   - Make sure to uncheck "Copy the main branch only" there is a branch in there we will use later
    - Name the repository "cicdcourse" click on "Create fork"
 
 5. **Download the repository locally**
    - Go to the newly created repo in your github account and click on the green "<>Code" button. Copy the SSH URL and open a comand shell on your computer. Paste in this command to create a local repository (connected to the github repository)
+
      ```bash
      git clone git@github.com:<your-username>/cicdcourse.git
      ```
+
    - Replace `<your-username>` with your GitHub username.
    - Change directory into the repo:
+
      ```bash
      cd cicdcourse
      ```
+
    - Verify the repo with the command
+
      ```bash
      git remote -v
-     ```  
-     You sould see something like: `origin	git@github.com:<your usernam>/cicdcourse.git (push)`
+     ```
+
+     You should see something like: `origin	git@github.com:<your usernam>/cicdcourse.git (push)`
 
 6. **Docker (requires local admin)**
   In orders to setup a local development environemt - we are using docker desktop as execution plattform. If you are not able to install docker because of local admin rights, you can still take part of lab 2-4. 
-   - Donload and install from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
+   - Download and install Docker Desktop:
+     - Docker for Windows or Mac [https://www.docker.com/get-started/](https://www.docker.com/get-started/)
+     - On Linux [https://docs.docker.com/desktop/setup/install/linux/](https://docs.docker.com/desktop/setup/install/linux/)
    - Ensure Docker is running and verify installation:
+
      ```bash
+     # Verify that docker is installed
+     docker --version
+     # Verify that docker is running
      docker info
      ```
+
     You should see lots of information about the docker environment running on your machine. 
 7. **Open the code in VS Code**
   
     VS code is a great universal IDE with many plugins that helps develop applications efficiently. For this course you will only need the bare minimum, but we encurage to explore and learn as much as possible. Most of the things in booth GitHub and Google cloud can be done directly from the IDE.
 
    - Start VS Code and open the directory by selecting "Open folder..." from the File meny
+
+    **or**
+
+   - Navigate to the folder through terminal and enter:
+
+    ```bash
+      # start Visual studio code in current directory
+      code .
+    ```
 
 ### This is the end of the first setup session
 Now the course will continue with some more slides
@@ -195,12 +223,76 @@ this reveals the URL for your personal dashboard - go to it and register your cl
 That´s it for lab 2! 
 
 ## Lab 3 - Setup a local runner
-Follow the instructions on this page to download and setup a local runner on your comupter: 
-https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
+Instead of following the instructions on how to download and setup a local runner on your computer found [here](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
+
+We will take a more platform agnostic path due ot the fact that we already have docker environment up and running. This guide will help you setup and understand the process of deploying a repository specific runner, which means your other repositories does not have access to it.
+
+To begin with we need to create a .env file locally where we store variables, go ahead and rename the `envTemplate` file to `.env` one in the github-runner directory.
+
+Populate the `IMAGE` variable with a name, for example *github-runner:local*, `USERNAME` with your github username and `REPOSITORY` with the current repository name.
+The `TARGETPLATFORM` variable should be either **arm64** (Apple Mac) or **x64** (PC).
+
+After this we need to visit GitHub UI and set up an Personal Access Token.
+
+1. First navigate to Your profile -> Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens
+2. Select Generate Token
+3. Give the token a name and description as you see fit, make sure the resource owner is set to your username, incase you are part of an organization
+4. Select expiration and what access you want it to have, select *All repositories*
+5. In the Repository permissions set Actions and Administration to read & write
+6. Click generate token.
+7. Copy and Save the token to your .env file for `ACCESS_TOKEN`.
+
+Now view the `Dockerfile`, `docker-compose.yml` and `start.sh` and read the explanations on what is going on in these files.
+
+When we have done this we need to prepare and *source* the .env file to the local environment.
+
+```bash
+# Navigate to the github-runner directory
+# For Mac users, download dos2unix() to deal with line endings problem:
+brew install dos2unix
+# Or any other package manager if you are on Linux to install dos2unix
+# Run it on the .env file to ensure line ending compability:
+dos2unix .env
+
+#Sourcing the .env to the local environment variables:
+source .env
+```
+Or windows powershell:
+
+```powershell
+# Dealing with the line ending issues:
+(Get-Content .env -Raw).Replace("`r`n", "`n") | Set-Content -NoNewline .env
+
+# For windows users that are not using GitBash, use the following in Powershell:
+# To source the .env file to environment
+Get-Content .env | ForEach-Object { $env:$($_.Split('=')[0]) = $_.Split('=')[1] }
+```
+
+Now we are ready to build and deploy the runners in a docker setting by using the following commands:
+
+```bash
+
+
+# Build the image using multiarch to adhere to ARM64 architecture
+# Tag and send it to the artifact repository
+docker build --build-arg TARGETPLATFORM=${TARGETPLATFORM} -t ${IMAGE} .
+
+# Deploy the image
+docker-compose up -d
+
+# And pull down the deployment and execute the cleanup script that unregisters the runner
+docker-compose down
+```
+
+Now visit your repository on GitHub.
+Enter Settings -> Actions -> Runners
+
+And you should now see your runner with the name "docker-runner-<short-sha>"
 
 - Open the workflow definition for the demo application ./github/workflows/demo-application.yml 
 You can do it locally in VS Code or directly in the GitHub UI.
-- Change 
+
+Change: 
 ```bash
 jobs:
   build-and-unittest:

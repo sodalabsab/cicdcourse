@@ -1,0 +1,5 @@
+IMAGE=<image-name:tag>
+USERNAME=<your-username>
+REPOSITORY=<your-repository-name>
+ACCESS_TOKEN=<your-github-token>
+TARGETPLATFORM=<arm64_or_x64>
